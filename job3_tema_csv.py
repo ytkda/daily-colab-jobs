@@ -1,12 +1,14 @@
-# job3: TEMA CSV展開（2:00に実行）
+# job3: TEMA CSV展開（毎日午前2時にRenderで自動実行）
 import pandas as pd
 import re
 from datetime import datetime
 
+# --- 宿泊日リスト抽出 ---
 def parse_stays(stay_txt):
     items = re.findall(r'\[([^\[\]]+)\]', str(stay_txt))
     return [(items[i], int(items[i+1].replace(',', '').replace('¥', ''))) for i in range(0, len(items), 2)]
 
+# --- 宿泊月 ---
 def get_stay_month(date_str):
     try:
         dt = pd.to_datetime(date_str)
@@ -14,6 +16,7 @@ def get_stay_month(date_str):
     except:
         return ""
 
+# --- リードタイム（LT） ---
 def get_lt(stay_day, reserve_day):
     try:
         d1 = pd.to_datetime(stay_day)
@@ -22,6 +25,7 @@ def get_lt(stay_day, reserve_day):
     except:
         return None
 
+# --- メイン処理 ---
 def process_tema_csv():
     df = pd.read_csv("input/RAW_TEMA.csv", encoding="utf-8-sig")
     records = []
